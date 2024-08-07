@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const UsedEmail = require("./models/NewUserDiamond"); // Importa el modelo
 
 const app = express();
-const port = 3000;
+const port = process.env.port || 3000;
 
 // Configura el body-parser para manejar solicitudes JSON
 app.use(bodyParser.json());
