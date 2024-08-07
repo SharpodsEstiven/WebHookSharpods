@@ -10,11 +10,7 @@ const port = process.env.PORT || 5000; // Asegúrate de que 'PORT' esté en may�
 app.use(bodyParser.json());
 
 // Conecta a MongoDB
-mongoose.connect("mongodb+srv://SantiagoZapata:SharpodsDataBase123.@cluster0.6ys5t.mongodb.net/", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-});
+mongoose.connect("mongodb+srv://SantiagoZapata:SharpodsDataBase123.@cluster0.6ys5t.mongodb.net/",);
 
 mongoose.connection.on("connected", () => {
   console.log("Conectado a MongoDB");
