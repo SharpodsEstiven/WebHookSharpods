@@ -33,7 +33,7 @@ app.post("/webhookDiamond", async (req, res) => {
       { email, isActive: true },
       { upsert: true, new: true }
     );
-    console.log(`Email ${email} has been inserted/updated.`);
+    console.log(`Email ${email} ha sido insertado/actualizado.`);
 
     res.status(200).send("Email guardado exitosamente");
   } catch (error) {
@@ -60,6 +60,33 @@ app.post("/webhookAntares", async (req, res) => {
 app.post("/webhookGriko", async (req, res) => {
   // Lógica para webhookGriko
   res.status(200).send("WebhookGriko recibido");
+});
+
+app.post("/deactivateEmail", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).send("Email es requerido");
+  }
+
+  try {
+    const updatedEmail = await UsedEmail.findOneAndUpdate(
+      { email },
+      { isActive: false },
+      { new: true }
+    );
+
+    if (updatedEmail) {
+      console.log(`Email ${email} ha sido desactivado.`);
+      res.status(200).send("Email desactivado exitosamente");
+    } else {
+      console.log(`Email ${email} no encontrado.`);
+      res.status(404).send("Email no encontrado");
+    }
+  } catch (error) {
+    console.error(`Error desactivando el email ${email}:`, error);
+    res.status(500).send("Error desactivando el email");
+  }
 });
 
 app.listen(port, () => {
