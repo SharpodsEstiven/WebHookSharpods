@@ -70,29 +70,29 @@ app.post("/webhookCarbon", async (req, res) => {
 //Ruta para el webhook de carbon usuario reactivado
 app.post("/updateEmailCarbon", async (req, res) => {
   const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).send("Email es requerido");
-  }
-
-  try {
-    const updatedEmail = await UsedEmailCarbon.findOneAndUpdate(
-      { email },
-      { isActive: true },
-      { new: true }
-    );
-
-    if (updatedEmail) {
-      console.log(`Email ${email} ha sido desactivado.`);
-      res.status(200).send("Email desactivado exitosamente");
-    } else {
-      console.log(`Email ${email} no encontrado.`);
-      res.status(404).send("Email no encontrado");
+  
+    if (!email) {
+      return res.status(400).send("Email es requerido");
     }
-  } catch (error) {
-    console.error(`Error desactivando el email ${email}:`, error);
-    res.status(500).send("Error desactivando el email");
-  }
+  
+    try {
+      const updatedEmail = await UsedEmailCarbon.findOneAndUpdate(
+        { email },
+        { isActive: true },
+        { new: true }
+      );
+  
+      if (updatedEmail) {
+        console.log(`Email ${email} ha sido actualizado.`);
+        res.status(200).send("Email actualizado exitosamente");
+      } else {
+        console.log(`Email ${email} no encontrado.`);
+        res.status(404).send("Email no encontrado");
+      }
+    } catch (error) {
+      console.error(`Error actualizando el email ${email}:`, error);
+      res.status(500).send("Error actualizando el email");
+    }
 });
 
 //Ruta para el webhook de diamond usuario desactivado
@@ -181,15 +181,15 @@ app.post("/updateEmail", async (req, res) => {
       );
   
       if (updatedEmail) {
-        console.log(`Email ${email} ha sido desactivado.`);
-        res.status(200).send("Email desactivado exitosamente");
+        console.log(`Email ${email} ha sido actualizado.`);
+        res.status(200).send("Email actualizado exitosamente");
       } else {
         console.log(`Email ${email} no encontrado.`);
         res.status(404).send("Email no encontrado");
       }
     } catch (error) {
-      console.error(`Error desactivando el email ${email}:`, error);
-      res.status(500).send("Error desactivando el email");
+      console.error(`Error actualizando el email ${email}:`, error);
+      res.status(500).send("Error actualizando el email");
     }
 });
 
