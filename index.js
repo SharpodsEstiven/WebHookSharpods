@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const UsedEmail = require("./models/NewUserDiamond"); // Importa el modelo
+const UsedEmailCentauri = require("./models/NewUserCentauri"); // Importa el modelo
 
 const app = express();
 const port = process.env.PORT || 5000; // Asegúrate de que 'PORT' esté en mayúsculas
@@ -119,4 +120,3 @@ app.post("/updateEmail", async (req, res) => {
 app.listen(port, () => {
   console.log(`Escuchando en el puerto ${port}`);
 });
-
