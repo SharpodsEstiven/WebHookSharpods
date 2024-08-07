@@ -2,11 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const UsedEmail = require("./models/NewUserDiamond"); // Importa el modelo
+const UsedEmailCentauri = require("./models/NewUserCentauri"); // Importa el modelo
 const UsedEmailCarbon = require("./models/NewUserCarbon"); // Importa el modelo
 const UsedEmailGriko = require('./models/NewUserGriko')
-
 const app = express();
 const port = process.env.PORT || 5000; // Asegúrate de que 'PORT' esté en mayúsculas
+
 
 // Configura el body-parser para manejar solicitudes JSON
 app.use(bodyParser.json());
@@ -43,7 +44,6 @@ app.post("/webhookDiamond", async (req, res) => {
     res.status(500).send("Error guardando el email");
   }
 });
-
 
 // Ruta para el webhook de Carbon usuario nuevo
 app.post("/webhookCarbon", async (req, res) => {
@@ -122,12 +122,6 @@ app.post("/desactivateEmailCarbon", async (req, res) => {
     console.error(`Error desactivando el email ${email}:`, error);
     res.status(500).send("Error desactivando el email");
   }
-});
-
-
-app.post("/webhookCentauri", async (req, res) => {
-  // Lógica para webhookCentauri
-  res.status(200).send("WebhookCentauri recibido");
 });
 
 app.post("/webhookAntares", async (req, res) => {
@@ -214,6 +208,82 @@ app.post("/updateEmailGriko", async (req, res) => {
   }
 });
 
+app.post("/webhookCentauri", async (req, res) => { //Crea Usuario
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).send("Email es requerido");
+  }
+
+  try {
+    await UsedEmailCentauri.findOneAndUpdate(
+      { email },
+      { email, isActive: true },
+      { upsert: true, new: true }
+    );
+    console.log(`Email ${email} ha sido insertado/actualizado.`);
+
+    res.status(200).send("Email guardado exitosamente");
+  } catch (error) {
+    console.error(`Error guardando el email ${email}:`, error);
+    res.status(500).send("Error guardando el email");
+  }
+});
+
+app.post("/desactivateEmailCentauri", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).send("Email es requerido");
+  }
+
+  try {
+    const updatedEmail = await UsedEmailCentauri.findOneAndUpdate(
+      { email },
+      { isActive: false },
+      { new: true }
+    );
+
+    if (updatedEmail) {
+      console.log(`Email ${email} ha sido desactivado.`);
+      res.status(200).send("Email desactivado exitosamente");
+    } else {
+      console.log(`Email ${email} no encontrado.`);
+      res.status(404).send("Email no encontrado");
+    }
+  } catch (error) {
+    console.error(`Error desactivando el email ${email}:`, error);
+    res.status(500).send("Error desactivando el email");
+  }
+});
+
+app.post("/updateEmailCentauri", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).send("Email es requerido");
+  }
+
+  try {
+    const updatedEmail = await UsedEmailCentauri.findOneAndUpdate(
+      { email },
+      { isActive: true },
+      { new: true }
+    );
+
+    if (updatedEmail) {
+      console.log(`Email ${email} ha sido actualizado.`);
+      res.status(200).send("Email actualizado exitosamente");
+    } else {
+      console.log(`Email ${email} no encontrado.`);
+      res.status(404).send("Email no encontrado");
+    }
+  } catch (error) {
+    console.error(`Error actualizando el email ${email}:`, error);
+    res.status(500).send("Error actualizando el email");
+  }
+});
+
 app.post("/desactivateEmailDiamond", async (req, res) => {
   const { email } = req.body;
 
@@ -271,4 +341,3 @@ app.post("/updateEmailDiamond", async (req, res) => {
 app.listen(port, () => {
   console.log(`Escuchando en el puerto ${port}`);
 });
-
