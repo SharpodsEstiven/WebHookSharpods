@@ -89,6 +89,34 @@ app.post("/deactivateEmail", async (req, res) => {
   }
 });
 
+app.post("/updateEmail", async (req, res) => {
+    const { email } = req.body;
+  
+    if (!email) {
+      return res.status(400).send("Email es requerido");
+    }
+  
+    try {
+      const updatedEmail = await UsedEmail.findOneAndUpdate(
+        { email },
+        { isActive: true },
+        { new: true }
+      );
+  
+      if (updatedEmail) {
+        console.log(`Email ${email} ha sido desactivado.`);
+        res.status(200).send("Email desactivado exitosamente");
+      } else {
+        console.log(`Email ${email} no encontrado.`);
+        res.status(404).send("Email no encontrado");
+      }
+    } catch (error) {
+      console.error(`Error desactivando el email ${email}:`, error);
+      res.status(500).send("Error desactivando el email");
+    }
+});
+
 app.listen(port, () => {
   console.log(`Escuchando en el puerto ${port}`);
 });
+
