@@ -23,30 +23,11 @@ mongoose.connection.on("error", (err) => {
   console.log("Error conectando a MongoDB:", err);
 });
 
-app.post("/webhookDiamond", async (req, res) => {
-  const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).send("Email es requerido");
-  }
-
-  try {
-    await UsedEmail.findOneAndUpdate(
-      { email },
-      { email, isActive: true },
-      { upsert: true, new: true }
-    );
-    console.log(`Email ${email} ha sido insertado/actualizado.`);
-
-    res.status(200).send("Email guardado exitosamente");
-  } catch (error) {
-    console.error(`Error guardando el email ${email}:`, error);
-    res.status(500).send("Error guardando el email");
-  }
-});
 
 // Ruta para el webhook de Carbon usuario nuevo
 app.post("/webhookCarbon", async (req, res) => {
+    
   const { email } = req.body;
 
   if (!email) {
@@ -283,6 +264,28 @@ app.post("/updateEmailCentauri", async (req, res) => {
     res.status(500).send("Error actualizando el email");
   }
 });
+
+app.post("/webhookDiamond", async (req, res) => {
+    const { email } = req.body;
+  
+    if (!email) {
+      return res.status(400).send("Email es requerido");
+    }
+  
+    try {
+      await UsedEmail.findOneAndUpdate(
+        { email },
+        { email, isActive: true },
+        { upsert: true, new: true }
+      );
+      console.log(`Email ${email} ha sido insertado/actualizado.`);
+  
+      res.status(200).send("Email guardado exitosamente");
+    } catch (error) {
+      console.error(`Error guardando el email ${email}:`, error);
+      res.status(500).send("Error guardando el email");
+    }
+  });
 
 app.post("/desactivateEmailDiamond", async (req, res) => {
   const { email } = req.body;
