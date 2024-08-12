@@ -534,6 +534,114 @@ app.post("/updateDatabase", async (req,res) => {
     }
 });
 
+app.post("/updateDatabaseDiamond", async (req,res) => {
+    const { email, telegramId } = req.body;
+
+    if (!email || !telegramId) {
+      return res.status(400).json({ error: 'Email y Telegram ID son requeridos.' });
+    }
+    try {
+      // Buscar si el usuario ya existe en la base de datos
+      let user = await UsedEmail.findOne({ email });
+  
+      if (!user) {
+        // Si el usuario no existe, crear un nuevo documento con el Telegram ID
+        user = new UsedEmail({ email, telegramId });
+        await user.save();
+        return res.status(201).json({ message: 'Usuario creado y Telegram ID asociado con éxito.' });
+      } else {
+        // Si el usuario existe, actualizar su Telegram ID
+        user.telegramId = telegramId;
+        await user.save();
+        return res.status(200).json({ message: 'Telegram ID actualizado con éxito.' });
+      }
+    } catch (err) {
+      console.error('Error al actualizar el Telegram ID:', err);
+      res.status(500).json({ error: 'Error al actualizar el Telegram ID.' });
+    }
+});
+
+app.post("/updateDatabaseCentauri", async (req,res) => {
+    const { email, telegramId } = req.body;
+
+    if (!email || !telegramId) {
+      return res.status(400).json({ error: 'Email y Telegram ID son requeridos.' });
+    }
+    try {
+      // Buscar si el usuario ya existe en la base de datos
+      let user = await UsedEmailCentauri.findOne({ email });
+  
+      if (!user) {
+        // Si el usuario no existe, crear un nuevo documento con el Telegram ID
+        user = new UsedEmailCentauri({ email, telegramId });
+        await user.save();
+        return res.status(201).json({ message: 'Usuario creado y Telegram ID asociado con éxito.' });
+      } else {
+        // Si el usuario existe, actualizar su Telegram ID
+        user.telegramId = telegramId;
+        await user.save();
+        return res.status(200).json({ message: 'Telegram ID actualizado con éxito.' });
+      }
+    } catch (err) {
+      console.error('Error al actualizar el Telegram ID:', err);
+      res.status(500).json({ error: 'Error al actualizar el Telegram ID.' });
+    }
+});
+
+app.post("/updateDatabaseAntares", async (req,res) => {
+    const { email, telegramId } = req.body;
+
+    if (!email || !telegramId) {
+      return res.status(400).json({ error: 'Email y Telegram ID son requeridos.' });
+    }
+    try {
+      // Buscar si el usuario ya existe en la base de datos
+      let user = await UsedEmailAntares.findOne({ email });
+  
+      if (!user) {
+        // Si el usuario no existe, crear un nuevo documento con el Telegram ID
+        user = new UsedEmailAntares({ email, telegramId });
+        await user.save();
+        return res.status(201).json({ message: 'Usuario creado y Telegram ID asociado con éxito.' });
+      } else {
+        // Si el usuario existe, actualizar su Telegram ID
+        user.telegramId = telegramId;
+        await user.save();
+        return res.status(200).json({ message: 'Telegram ID actualizado con éxito.' });
+      }
+    } catch (err) {
+      console.error('Error al actualizar el Telegram ID:', err);
+      res.status(500).json({ error: 'Error al actualizar el Telegram ID.' });
+    }
+});
+
+app.post("/updateDatabaseCarbon", async (req,res) => {
+    const { email, telegramId } = req.body;
+
+    if (!email || !telegramId) {
+      return res.status(400).json({ error: 'Email y Telegram ID son requeridos.' });
+    }
+    try {
+      // Buscar si el usuario ya existe en la base de datos
+      let user = await UsedEmailCarbon.findOne({ email });
+  
+      if (!user) {
+        // Si el usuario no existe, crear un nuevo documento con el Telegram ID
+        user = new UsedEmailCarbon({ email, telegramId });
+        await user.save();
+        return res.status(201).json({ message: 'Usuario creado y Telegram ID asociado con éxito.' });
+      } else {
+        // Si el usuario existe, actualizar su Telegram ID
+        user.telegramId = telegramId;
+        await user.save();
+        return res.status(200).json({ message: 'Telegram ID actualizado con éxito.' });
+      }
+    } catch (err) {
+      console.error('Error al actualizar el Telegram ID:', err);
+      res.status(500).json({ error: 'Error al actualizar el Telegram ID.' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Escuchando en el puerto ${port}`);
 });
