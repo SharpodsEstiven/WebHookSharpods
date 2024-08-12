@@ -413,6 +413,35 @@ app.post("/updateEmailDiamond", async (req, res) => {
     }
 });
 
+app.post("/updateDabase", async (req,res) => {
+    const { email, telegramId } = req.body;
+
+    if (!email || !telegramId) {
+      return res.status(400).json({ error: 'Email y Telegram ID son requeridos.' });
+    }
+    try {
+      // Buscar si el usuario ya existe en la base de datos
+      let user = await UsedEmailGriko.findOne({ email });
+  
+      if (!user) {
+        // Si el usuario no existe, crear un nuevo documento con el Telegram ID
+        user = new UsedEmailGriko({ email, telegramId });
+        await user.save();
+        return res.status(201).json({ message: 'Usuario creado y Telegram ID asociado con éxito.' });
+      } else {
+        // Si el usuario existe, actualizar su Telegram ID
+        user.telegramId = telegramId;
+        await user.save();
+        return res.status(200).json({ message: 'Telegram ID actualizado con éxito.' });
+      }
+    } catch (err) {
+      console.error('Error al actualizar el Telegram ID:', err);
+      res.status(500).json({ error: 'Error al actualizar el Telegram ID.' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Escuchando en el puerto ${port}`);
 });
+
+
