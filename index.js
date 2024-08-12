@@ -413,7 +413,7 @@ app.post("/updateEmailDiamond", async (req, res) => {
     }
 });
 
-app.post("/updateDabate", async (req,res) => {
+app.post("/updateDatabase", async (req,res) => {
     const { email, telegramId } = req.body;
 
     if (!email || !telegramId) {
