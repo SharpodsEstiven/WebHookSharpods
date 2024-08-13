@@ -642,6 +642,30 @@ app.post("/updateDatabaseCarbon", async (req,res) => {
     }
 });
 
+app.get("/usuariosSinTelegramId", async (req, res) => {
+    try {
+        // Buscar usuarios en todas las colecciones que no tienen telegramId
+        const usuariosSinTelegramIdGriko = await UsedEmailGriko.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdDiamond = await UsedEmail.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdCentauri = await UsedEmailCentauri.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdAntares = await UsedEmailAntares.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdCarbon = await UsedEmailCarbon.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdEnigmario = await UsedEmailEnigmario.find({ telegramId: { $exists: false } });
+
+        // Combina todos los resultados en un solo array
+        const usuariosSinTelegramId = [
+          
+            ...usuariosSinTelegramIdCentauri,
+
+        ];
+
+        res.status(200).json(usuariosSinTelegramId);
+    } catch (error) {
+        console.error('Error al obtener usuarios sin Telegram ID:', error);
+        res.status(500).json({ error: 'Error al obtener usuarios sin Telegram ID.' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Escuchando en el puerto ${port}`);
 });
