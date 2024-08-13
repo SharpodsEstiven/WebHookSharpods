@@ -10,6 +10,10 @@ const UsedEmailSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  telegramId:{
+    type: String,
+    unique: true
+  }
 });
 
 const UsedEmailAntares = mongoose.model('AntaresUsers', UsedEmailSchema);
