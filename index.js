@@ -477,7 +477,7 @@ app.post("/desactivateEmailEnigmario", async (req, res) => {
     }
 });
 
-// Ruta para el webhook de Diamond usuario reactivado
+// Ruta para el webhook de Enigmario usuario reactivado
 app.post("/updateEmailEnigmario", async (req, res) => {
     const { email } = req.body;
 
