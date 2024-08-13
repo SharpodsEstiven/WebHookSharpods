@@ -10,8 +10,13 @@ const UsedEmailSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  telegramId:{
+    type: String,
+    unique: true,
+    required:false
+  }
 });
 
-const UsedEmailCarbon = mongoose.model('carbonUsers', UsedEmailSchema);
+const UsedEmailCentauri = mongoose.model('CentauriUsers', UsedEmailSchema);
 
-module.exports = UsedEmailCarbon;
+module.exports = UsedEmailCentauri;

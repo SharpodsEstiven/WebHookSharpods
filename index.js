@@ -1,13 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const UsedEmail = require("./models/NewUserDiamond"); // Importa el modelo
-const UsedEmailCentauri = require("./models/NewUserCentauri"); // Importa el modelo
-const UsedEmailCarbon = require("./models/NewUserCarbon"); // Importa el modelo
-const UsedEmailGriko = require('./models/NewUserGriko')
-const UsedEmailAntares = require("./models/NewUserAntares");
-const UsedEmailEnigmario = require("./models/newUserEnigmario");
-
+const routesAntares = require("./src/routes/routesAntares")
+const routesCarbon = require("./src/routes/routesCarbon")
+const routesGriko = require("./src/routes/routesGriko")
+const routesEnigmario = require("./src/routes/routesEnigmario")
+const routesCentauri = require("./src/routes/routesCentauri")
+const routesDiamond = require("./src/routes/routesDiamond")
 const app = express();
 const port = process.env.PORT || 5000; // Asegúrate de que 'PORT' esté en mayúsculas
 
@@ -25,514 +24,47 @@ mongoose.connection.on("error", (err) => {
     console.log("Error conectando a MongoDB:", err);
 });
 
-
-/* CARBON */
-// Ruta para el webhook de Carbon usuario nuevo
-app.post("/webhookCarbon", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
+/* app.get("/usuariosSinTelegramId", async (req, res) => {
     try {
-        await UsedEmailCarbon.findOneAndUpdate(
-            { email },
-            { email, isActive: true },
-            { upsert: true, new: true }
-        );
-        console.log(`Email ${email} ha sido insertado/actualizado.`);
-        res.status(200).send("Email guardado exitosamente");
+        // Buscar usuarios en todas las colecciones que no tienen telegramId
+        const usuariosSinTelegramIdGriko = await UsedEmailGriko.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdDiamond = await UsedEmail.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdCentauri = await UsedEmailCentauri.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdAntares = await UsedEmailAntares.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdCarbon = await UsedEmailCarbon.find({ telegramId: { $exists: false } });
+        const usuariosSinTelegramIdEnigmario = await UsedEmailEnigmario.find({ telegramId: { $exists: false } });
+
+        // Combina todos los resultados en un solo array
+        const usuariosSinTelegramId = [
+          
+      //    ...usuariosSinTelegramIdAntares,
+     //       ...usuariosSinTelegramIdGriko,
+     //       ...usuariosSinTelegramIdDiamond,
+     //       ...usuariosSinTelegramIdCentauri,
+         ...usuariosSinTelegramIdCarbon,
+     //       ...usuariosSinTelegramIdEnigmario
+
+        ];
+
+        res.status(200).json(usuariosSinTelegramId);
     } catch (error) {
-        console.error(`Error guardando el email ${email}:`, error);
-        res.status(500).send("Error guardando el email");
+        console.error('Error al obtener usuarios sin Telegram ID:', error);
+        res.status(500).json({ error: 'Error al obtener usuarios sin Telegram ID.' });
     }
-});
+}); */
 
-// Ruta para el webhook de carbon usuario reactivado
-app.post("/updateEmailCarbon", async (req, res) => {
-    const { email } = req.body;
+app.use("/routesAntares",routesAntares)
 
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
+app.use("/routesCarbon",routesCarbon)
 
-    try {
-        const updatedEmail = await UsedEmailCarbon.findOneAndUpdate(
-            { email },
-            { isActive: true },
-            { new: true }
-        );
+app.use("/routesGriko",routesGriko)
 
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido actualizado.`);
-            res.status(200).send("Email actualizado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error actualizando el email ${email}:`, error);
-        res.status(500).send("Error actualizando el email");
-    }
-});
+app.use("/routesEnigmario",routesEnigmario)
 
-// Ruta para el webhook de diamond usuario desactivado
-app.post("/desactivateEmailCarbon", async (req, res) => {
-    const { email } = req.body;
+app.use("/routesDiamond",routesDiamond)
 
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
+app.use("/routesCentauri",routesCentauri)
 
-    try {
-        const updatedEmail = await UsedEmailCarbon.findOneAndUpdate(
-            { email },
-            { isActive: false },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido desactivado.`);
-            res.status(200).send("Email desactivado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error desactivando el email ${email}:`, error);
-        res.status(500).send("Error desactivando el email");
-    }
-});
-
-
-/* ANTARES */
-// Ruta para el webhook de Antares usuario nuevo
-app.post("/webhookAntares", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        await UsedEmailAntares.findOneAndUpdate(
-            { email },
-            { email, isActive: true },
-            { upsert: true, new: true }
-        );
-        console.log(`Email ${email} ha sido insertado/actualizado.`);
-        res.status(200).send("Email guardado exitosamente");
-    } catch (error) {
-        console.error(`Error guardando el email ${email}:`, error);
-        res.status(500).send("Error guardando el email");
-    }
-});
-
-// Ruta para el webhook de antares usuario reactivado
-app.post("/updateEmailAntares", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailAntares.findOneAndUpdate(
-            { email },
-            { isActive: true },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido actualizado.`);
-            res.status(200).send("Email actualizado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error actualizando el email ${email}:`, error);
-        res.status(500).send("Error actualizando el email");
-    }
-});
-
-// Ruta para el webhook de Antares usuario desactivaddo
-app.post("desactivateEmailAntares", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailAntares.findOneAndUpdate(
-            { email },
-            { isActive: false },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido desactivado.`);
-            res.status(200).send("Email desactivado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error desactivando el email ${email}:`, error);
-        res.status(500).send("Error desactivando el email");
-    }
-})
-
-
-/* GRIKO */
-// Ruta para el webhook de Griko usuario nuevo
-app.post("/webhookGriko", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        await UsedEmailGriko.findOneAndUpdate(
-            { email },
-            { email, isActive: true },
-            { upsert: true, new: true }
-        );
-        console.log(`Email ${email} ha sido insertado/actualizado.`);
-        res.status(200).send("Email guardado exitosamente");
-    } catch (error) {
-        console.error(`Error guardando el email ${email}:`, error);
-        res.status(500).send("Error guardando el email");
-    }
-});
-
-// Ruta para el webhook de Griko usuario desactivado
-app.post("/desactivateEmailGriko", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailGriko.findOneAndUpdate(
-            { email },
-            { isActive: false },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido desactivado.`);
-            res.status(200).send("Email desactivado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error desactivando el email ${email}:`, error);
-        res.status(500).send("Error desactivando el email");
-    }
-});
-
-// Ruta para el webhook de Griko usuario reactivado
-app.post("/updateEmailGriko", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailGriko.findOneAndUpdate(
-            { email },
-            { isActive: true },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido actualizado.`);
-            res.status(200).send("Email actualizado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error actualizando el email ${email}:`, error);
-        res.status(500).send("Error actualizando el email");
-    }
-});
-
-
-/* CENTAURI */
-// Ruta para el webhook de Centauri usuario nuevo
-app.post("/webhookCentauri", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        await UsedEmailCentauri.findOneAndUpdate(
-            { email },
-            { email, isActive: true },
-            { upsert: true, new: true }
-        );
-        console.log(`Email ${email} ha sido insertado/actualizado.`);
-        res.status(200).send("Email guardado exitosamente");
-    } catch (error) {
-        console.error(`Error guardando el email ${email}:`, error);
-        res.status(500).send("Error guardando el email");
-    }
-});
-
-// Ruta para el webhook de Centauri usuario desactivado
-app.post("/desactivateEmailCentauri", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailCentauri.findOneAndUpdate(
-            { email },
-            { isActive: false },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido desactivado.`);
-            res.status(200).send("Email desactivado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error desactivando el email ${email}:`, error);
-        res.status(500).send("Error desactivando el email");
-    }
-});
-
-// Ruta para el webhook de Centauri usuario reactivado
-app.post("/updateEmailCentauri", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailCentauri.findOneAndUpdate(
-            { email },
-            { isActive: true },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido actualizado.`);
-            res.status(200).send("Email actualizado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error actualizando el email ${email}:`, error);
-        res.status(500).send("Error actualizando el email");
-    }
-});
-
-
-/* DIAMOND */
-// Ruta para el webhook de Diamond usuario nuevo
-app.post("/webhookDiamond", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        await UsedEmail.findOneAndUpdate(
-            { email },
-            { email, isActive: true },
-            { upsert: true, new: true }
-        );
-        console.log(`Email ${email} ha sido insertado/actualizado.`);
-        res.status(200).send("Email guardado exitosamente");
-    } catch (error) {
-        console.error(`Error guardando el email ${email}:`, error);
-        res.status(500).send("Error guardando el email");
-    }
-});
-
-// Ruta para el webhook de Diamond usuario desactivado
-app.post("/desactivateEmailDiamond", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmail.findOneAndUpdate(
-            { email },
-            { isActive: false },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido desactivado.`);
-            res.status(200).send("Email desactivado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error desactivando el email ${email}:`, error);
-        res.status(500).send("Error desactivando el email");
-    }
-});
-
-// Ruta para el webhook de Diamond usuario reactivado
-app.post("/updateEmailDiamond", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmail.findOneAndUpdate(
-            { email },
-            { isActive: true },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido actualizado.`);
-            res.status(200).send("Email actualizado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error actualizando el email ${email}:`, error);
-        res.status(500).send("Error actualizando el email");
-    }
-});
-
-
-/* ENIGMARIO */
-// Ruta para el webhook de Enigmario usuario nuevo
-app.post("/webhookEnigmario", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        await UsedEmail.findOneAndUpdate(
-            { email },
-            { email, isActive: true },
-            { upsert: true, new: true }
-        );
-        console.log(`Email ${email} ha sido insertado/actualizado.`);
-        res.status(200).send("Email guardado exitosamente");
-    } catch (error) {
-        console.error(`Error guardando el email ${email}:`, error);
-        res.status(500).send("Error guardando el email");
-    }
-});
-
-// Ruta para el webhook de Enigmario usuario desactivado
-app.post("/desactivateEmailEnigmario", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailEnigmario.findOneAndUpdate(
-            { email },
-            { isActive: false },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido desactivado.`);
-            res.status(200).send("Email desactivado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error desactivando el email ${email}:`, error);
-        res.status(500).send("Error desactivando el email");
-    }
-});
-
-// Ruta para el webhook de Enigmario usuario reactivado
-app.post("/updateEmailEnigmario", async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send("Email es requerido");
-    }
-
-    try {
-        const updatedEmail = await UsedEmailEnigmario.findOneAndUpdate(
-            { email },
-            { isActive: true },
-            { new: true }
-        );
-
-        if (updatedEmail) {
-            console.log(`Email ${email} ha sido actualizado.`);
-            res.status(200).send("Email actualizado exitosamente");
-        } else {
-            console.log(`Email ${email} no encontrado.`);
-            res.status(404).send("Email no encontrado");
-        }
-    } catch (error) {
-        console.error(`Error actualizando el email ${email}:`, error);
-        res.status(500).send("Error actualizando el email");
-    }
-});
-
-
-
-app.post("/updateDatabase", async (req,res) => {
-    const { email, telegramId } = req.body;
-
-    if (!email || !telegramId) {
-      return res.status(400).json({ error: 'Email y Telegram ID son requeridos.' });
-    }
-    try {
-      // Buscar si el usuario ya existe en la base de datos
-      let user = await UsedEmailGriko.findOne({ email });
-  
-      if (!user) {
-        // Si el usuario no existe, crear un nuevo documento con el Telegram ID
-        user = new UsedEmailGriko({ email, telegramId });
-        await user.save();
-        return res.status(201).json({ message: 'Usuario creado y Telegram ID asociado con éxito.' });
-      } else {
-        // Si el usuario existe, actualizar su Telegram ID
-        user.telegramId = telegramId;
-        await user.save();
-        return res.status(200).json({ message: 'Telegram ID actualizado con éxito.' });
-      }
-    } catch (err) {
-      console.error('Error al actualizar el Telegram ID:', err);
-      res.status(500).json({ error: 'Error al actualizar el Telegram ID.' });
-    }
-});
 
 app.listen(port, () => {
     console.log(`Escuchando en el puerto ${port}`);

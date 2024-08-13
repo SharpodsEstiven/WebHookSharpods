@@ -12,7 +12,8 @@ const UsedEmailSchema = new mongoose.Schema({
   },
   telegramId:{
     type: String,
-    unique: true
+    unique: true,
+    required:false
   }
 });
 
