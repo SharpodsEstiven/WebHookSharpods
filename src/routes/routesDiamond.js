@@ -6,7 +6,7 @@ const router = express.Router();
 /* DIAMOND */
 // Ruta para el webhook de Diamond usuario nuevo
 router.post("/webhookDiamond", async (req, res) => {
-    const { email } = req.body;
+    const { email, telegramId } = req.body;
 
     if (!email) {
         return res.status(400).send("Email es requerido");
@@ -15,7 +15,7 @@ router.post("/webhookDiamond", async (req, res) => {
     try {
         await UsedEmail.findOneAndUpdate(
             { email },
-            { email, isActive: true },
+            { email, isActive: true, telegramId },
             { upsert: true, new: true }
         );
         console.log(`Email ${email} ha sido insertado/actualizado.`);

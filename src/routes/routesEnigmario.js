@@ -11,7 +11,7 @@ router.post("/webhookEnigmario", async (req, res) => {
     }
 
     try {
-        await UsedEmail.findOneAndUpdate(
+        await UsedEmailEnigmario.findOneAndUpdate(
             { email },
             { email, isActive: true },
             { upsert: true, new: true }
